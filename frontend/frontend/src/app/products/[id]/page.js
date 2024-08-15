@@ -17,16 +17,21 @@ const ProductDetails = () => {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      const res = await fetch(`http://localhost:5000/api/products/${id}`);
-      const data = await res.json();
-      setProduct(data);
-      setFeedbackList(data.feedback || []); // Set initial feedback list
+      try {
+        const res = await fetch(`http://localhost:5000/api/products/${id}`);
+        const data = await res.json();
+        setProduct(data);
+        setFeedbackList(data.feedback || []); // Set initial feedback list
+      } catch (error) {
+        console.error('Error fetching product:', error);
+      }
     };
 
     fetchProduct();
   }, [id]);
 
   const handleAddToCart = async () => {
+    if (!product) return;
     try {
       const res = await fetch(`http://localhost:5000/api/carts/${product._id}`, {
         method: 'POST',
@@ -47,6 +52,7 @@ const ProductDetails = () => {
   };
 
   const handleSubmitRating = async () => {
+    if (!product) return;
     try {
       const res = await fetch(`http://localhost:5000/api/products/${product._id}/rate`, {
         method: 'POST',
@@ -68,6 +74,7 @@ const ProductDetails = () => {
   };
 
   const handleSubmitFeedback = async () => {
+    if (!product) return;
     try {
       const res = await fetch(`http://localhost:5000/api/feedback/${product._id}`, {
         method: 'POST',
@@ -78,7 +85,6 @@ const ProductDetails = () => {
         body: JSON.stringify({ feedback }),
       });
 
-      // Check if the response is valid JSON
       const responseText = await res.text();
       const responseJson = JSON.parse(responseText);
 
@@ -105,22 +111,42 @@ const ProductDetails = () => {
 
   return (
     <Layout>
-      <Container className="my-8">
-        <Typography variant="h4" className="text-3xl font-bold mb-4">{product.name}</Typography>
+      <Container sx={{ my: 8 }}>
+        <Typography 
+          variant="h4" 
+          gutterBottom 
+          sx={{ 
+            fontFamily: 'Roboto, sans-serif',
+            fontWeight: 'bold',
+            color: '#333',
+          }}
+        >
+          {product.name}
+        </Typography>
         <Grid container spacing={4}>
           <Grid item xs={12} md={6}>
-            <img src={product.imageUrl} alt={product.name} className="w-full h-auto rounded-lg shadow-lg" />
+            <img 
+              src={product.imageUrl} 
+              alt={product.name} 
+              style={{ width: '100%', height: 'auto', borderRadius: '8px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)' }} 
+            />
           </Grid>
           <Grid item xs={12} md={6}>
-            <Box className="flex flex-col justify-between h-full">
+            <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
               <div>
-                <Typography variant="h6" className="text-xl font-semibold mb-2">${product.price}</Typography>
-                <Typography className="text-gray-700 mb-4">{product.description}</Typography>
-                <Typography className="text-lg font-semibold mb-2">Additional Information:</Typography>
-                <Typography className="text-gray-600">Category: {product.category || 'N/A'}</Typography>
-                <Typography className="text-gray-600">Stock: {product.stock || 'N/A'}</Typography>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2, fontSize: '1.5rem' }}>
+                  ${product.price}
+                </Typography>
+                <Typography sx={{ mb: 4, color: '#555' }}>{product.description}</Typography>
+                <Typography sx={{ fontWeight: 'bold', mb: 2 }}>Additional Information:</Typography>
+                <Typography sx={{ color: '#666' }}>Category: {product.category || 'N/A'}</Typography>
+                <Typography sx={{ color: '#666' }}>Stock: {product.stock || 'N/A'}</Typography>
               </div>
-              <Button variant="contained" color="primary" onClick={handleAddToCart} className="mt-4">
+              <Button 
+                variant="contained" 
+                sx={{ backgroundColor: '#000', color: '#fff', '&:hover': { backgroundColor: '#333' } }} 
+                onClick={handleAddToCart}
+              >
                 Add to Cart
               </Button>
             </Box>
@@ -139,7 +165,7 @@ const ProductDetails = () => {
           />
           <Button 
             variant="contained" 
-            color="primary" 
+            sx={{ backgroundColor: '#000', color: '#fff', '&:hover': { backgroundColor: '#333' } }}
             onClick={handleSubmitRating}
           >
             Submit Rating
@@ -162,7 +188,7 @@ const ProductDetails = () => {
           />
           <Button 
             variant="contained" 
-            color="primary" 
+            sx={{ backgroundColor: '#000', color: '#fff', '&:hover': { backgroundColor: '#333' } }}
             onClick={handleSubmitFeedback}
           >
             Submit Feedback
@@ -176,7 +202,16 @@ const ProductDetails = () => {
           </Typography>
           {feedbackList.length > 0 ? (
             feedbackList.map((fb, index) => (
-              <Box key={index} sx={{ mb: 2, padding: 2, border: '1px solid #ddd', borderRadius: '4px' }}>
+              <Box 
+                key={index} 
+                sx={{ 
+                  mb: 2, 
+                  p: 2, 
+                  border: '1px solid #ddd', 
+                  borderRadius: '4px', 
+                  backgroundColor: '#f9f9f9' 
+                }}
+              >
                 <Typography>{fb.text}</Typography>
               </Box>
             ))

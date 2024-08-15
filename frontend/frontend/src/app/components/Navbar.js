@@ -30,7 +30,7 @@ const Layout = ({ children }) => {
       >
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1, color: '#F4F4F9' }}>
-            Luxury E-Commerce
+            LeoNAF
           </Typography>
           <Box sx={{ display: 'flex', gap: 2 }}>
             <Button 
@@ -118,7 +118,7 @@ const Layout = ({ children }) => {
         {children}
       </Container>
       <Box component="footer" sx={{ backgroundColor: '#f5f5f5', py: 3, textAlign: 'center' }}>
-        <Typography>&copy; {new Date().getFullYear()} Luxury E-Commerce</Typography>
+        <Typography>&copy; {new Date().getFullYear()} LeoNAF</Typography>
       </Box>
     </Box>
   );

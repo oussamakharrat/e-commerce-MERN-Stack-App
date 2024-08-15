@@ -4,28 +4,19 @@ import React from 'react';
 import { Card, CardContent, CardMedia, Typography, Button, CardActions } from '@mui/material';
 import Link from 'next/link';
 
-const ProductCard = ({ product }) => {
-  const handleAddToCart = async () => {
-    try {
-      const res = await fetch(`http://localhost:5000/api/carts/${product._id}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      if (res.ok) {
-        alert('Product added to cart!');
-      } else {
-        alert('Failed to add product to cart.');
-      }
-    } catch (error) {
-      console.error(error);
-      alert('An error occurred while adding the product to the cart.');
-    }
-  };
-
+const ProductCard = ({ product, onAddToCart }) => {
   return (
-    <Card sx={{ maxWidth: 345, boxShadow: 3, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' } }}>
+    <Card 
+      sx={{ 
+        maxWidth: 300,
+        minHeight: 380,
+        boxShadow: 3,
+        display: 'flex',
+        flexDirection: 'column',
+        transition: 'transform 0.3s',
+        '&:hover': { transform: 'scale(1.03)' },
+      }}
+    >
       <CardMedia
         component="img"
         height="140"
@@ -33,7 +24,7 @@ const ProductCard = ({ product }) => {
         alt={product.name}
         sx={{ objectFit: 'cover' }}
       />
-      <CardContent>
+      <CardContent sx={{ flexGrow: 1 }}>
         <Typography gutterBottom variant="h6" component="div">
           {product.name}
         </Typography>
@@ -42,11 +33,39 @@ const ProductCard = ({ product }) => {
         </Typography>
       </CardContent>
       <CardActions sx={{ justifyContent: 'space-between' }}>
-        <Button variant="contained" color="primary" onClick={handleAddToCart}>
+        <Button 
+          variant="contained"
+          sx={{ 
+            backgroundColor: '#000000',
+            color: '#ffffff',
+            textTransform: 'none',
+            borderRadius: 1,
+            padding: '8px 16px',
+            fontWeight: 'bold',
+            '&:hover': {
+              backgroundColor: '#333333',
+            },
+          }} 
+          onClick={() => onAddToCart(product)}
+        >
           Add to Cart
         </Button>
         <Link href={`/products/${product._id}`} passHref>
-          <Button variant="outlined" color="primary">
+          <Button 
+            variant="outlined"
+            sx={{ 
+              borderColor: '#000000',
+              color: '#000000',
+              textTransform: 'none',
+              borderRadius: 1,
+              padding: '8px 16px',
+              fontWeight: 'bold',
+              '&:hover': {
+                borderColor: '#333333',
+                color: '#333333',
+              },
+            }}
+          >
             View Details
           </Button>
         </Link>

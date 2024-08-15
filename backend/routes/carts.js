@@ -1,3 +1,4 @@
+// routes/carts.js
 const express = require('express');
 const Cart = require('../models/Cart');
 const Product = require('../models/Product');
@@ -15,12 +16,12 @@ router.get('/', authenticateUser, async (req, res) => {
   try {
     const cart = await Cart.findOne({ user: req.user.id }).populate('items.product');
     if (!cart) {
-      return res.status(404).json({ message: 'Cart not found' });
+      return res.status(200).json({ message: 'Cart not found', items: [] }); // Return empty cart
     }
     res.json(cart);
   } catch (error) {
     console.error('Error fetching cart:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
@@ -41,16 +42,16 @@ router.post('/:productId', authenticateUser, async (req, res) => {
 
     const existingItem = cart.items.find(item => item.product.toString() === productId);
     if (existingItem) {
-      existingItem.quantity += 1;
+      existingItem.quantity += 1; // Increment quantity if product exists
     } else {
-      cart.items.push({ product: productId, quantity: 1 });
+      cart.items.push({ product: productId, quantity: 1 }); // Add new product if not exists
     }
 
     await cart.save();
     res.status(201).json(cart);
   } catch (error) {
     console.error('Error adding to cart:', error);
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: 'Error adding to cart' });
   }
 });
 
@@ -69,7 +70,7 @@ router.delete('/:productId', authenticateUser, async (req, res) => {
     res.json(cart);
   } catch (error) {
     console.error('Error removing from cart:', error);
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: 'Error removing from cart' });
   }
 });
 
@@ -94,7 +95,7 @@ router.patch('/increment/:productId', authenticateUser, async (req, res) => {
     res.json(cart);
   } catch (error) {
     console.error('Error incrementing quantity:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Error incrementing quantity' });
   }
 });
 
@@ -125,7 +126,7 @@ router.patch('/decrement/:productId', authenticateUser, async (req, res) => {
     }
   } catch (error) {
     console.error('Error decrementing quantity:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Error decrementing quantity' });
   }
 });
 

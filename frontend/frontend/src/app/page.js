@@ -70,18 +70,20 @@ const Home = () => {
           textAlign: 'center',
           borderRadius: '8px',
           mb: 4,
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        <Typography variant="h2" gutterBottom>
+        <Typography variant="h2" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
           Discover the Best Deals on Luxury Products
         </Typography>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h5" gutterBottom sx={{ mb: 4 }}>
           Shop the finest selection of exclusive products.
         </Typography>
         <Button 
           variant="contained" 
           color="primary" 
-          sx={{ mt: 4 }}
+          sx={{ px: 4, py: 1.5 }}
           href="/products"
         >
           Shop Now
@@ -96,14 +98,14 @@ const Home = () => {
         <Grid container spacing={4}>
           {categories.map((category) => (
             <Grid item xs={12} sm={6} md={4} key={category._id}>
-              <Card sx={{ height: '100%' }}>
+              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <CardMedia
                   component="img"
                   height="140"
                   image={category.image} // Replace with category image URL
                   alt={category.name}
                 />
-                <CardContent>
+                <CardContent sx={{ flexGrow: 1 }}>
                   <Typography variant="h6" gutterBottom>
                     {category.name}
                   </Typography>
@@ -170,7 +172,8 @@ const Home = () => {
                   borderRadius: '8px', 
                   p: 2, 
                   backgroundColor: '#f9f9f9', 
-                  textAlign: 'center' 
+                  textAlign: 'center', 
+                  height: '100%' 
                 }}
               >
                 <Typography variant="h6" gutterBottom>
@@ -191,7 +194,11 @@ const Home = () => {
           backgroundColor: '#f0f0f0', 
           py: 4, 
           textAlign: 'center', 
-          borderRadius: '8px' 
+          borderRadius: '8px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          mb: 4 
         }}
       >
         <Typography variant="h4" gutterBottom>
@@ -200,17 +207,17 @@ const Home = () => {
         <Typography variant="body1" gutterBottom>
           Subscribe to receive the latest news and exclusive offers.
         </Typography>
-        <Box component="form" noValidate autoComplete="off">
+        <Box component="form" noValidate autoComplete="off" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <TextField
             label="Email Address"
             variant="outlined"
-            sx={{ mb: 2, width: '300px' }}
+            sx={{ mb: 2, width: '100%', maxWidth: '400px' }}
           />
-          <br />
           <Button 
             variant="contained" 
             color="primary"
             type="submit"
+            sx={{ width: '100%', maxWidth: '400px' }}
           >
             Subscribe
           </Button>

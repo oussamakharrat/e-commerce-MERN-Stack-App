@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Button, IconButton, Card, CardContent, Divider, Grid, Box, CircularProgress } from '@mui/material';
+import { Container, Typography, Button, IconButton, Card, CardContent, Divider, Box, CircularProgress, Snackbar, Alert } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Layout from '../components/Layout';
 
 const CartPage = () => {
   const [cart, setCart] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -67,7 +68,7 @@ const CartPage = () => {
         item.product && item.product._id === productId 
           ? { ...item, quantity: item.quantity - 1 } 
           : item
-      ).filter(item => item.quantity > 0); // Remove items with quantity 0
+      ).filter(item => item.quantity > 0);
       return { ...prevCart, items: updatedItems };
     });
 
@@ -112,50 +113,90 @@ const CartPage = () => {
     }
   };
 
+  const calculateTotalAmount = () => {
+    if (!cart || !cart.items) return 0;
+    return cart.items.reduce((total, item) => {
+      const itemPrice = item.product?.price || 0;
+      return total + (itemPrice * item.quantity);
+    }, 0);
+  };
+
+  const handleCheckout = () => {
+    setOpenSnackbar(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
   if (cart === null) return <CircularProgress sx={{ display: 'block', margin: 'auto', mt: 5 }} />;
-  if (cart.items.length === 0) return <Typography align="center" variant="h6">Your cart is empty.</Typography>;
+  if (cart.items.length === 0) return (
+    <Layout>
+      <Typography align="center" variant="h6">Your cart is empty.</Typography>
+    </Layout>
+  );
 
   return (
     <Layout>
-      <Container maxWidth="lg">
+      <Container maxWidth="md">
         <Typography variant="h4" align="center" gutterBottom>
           Your Cart
         </Typography>
-        <Grid container spacing={3}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {cart.items
             .filter(item => item.product && item.product.name && item.product.price != null)
             .map((item) => (
-              <Grid item xs={12} sm={6} md={4} key={item.product._id}>
-                <Card variant="outlined" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <CardContent>
-                    <Typography variant="h6" component="div">
-                      {item.product.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Price: ${item.product.price}
-                    </Typography>
-                    <Divider sx={{ my: 2 }} />
-                    <Typography variant="body1">
-                      Quantity: {item.quantity}
-                    </Typography>
-                  </CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
-                    <IconButton color="primary" onClick={() => handleIncrement(item.product._id)}>
-                      <AddIcon />
-                    </IconButton>
-                    <IconButton color="secondary" onClick={() => handleDecrement(item.product._id)} disabled={item.quantity <= 1}>
-                      <RemoveIcon />
-                    </IconButton>
-                    <Button variant="outlined" color="error" onClick={() => handleRemove(item.product._id)} sx={{ ml: 2 }}>
-                      Remove
-                    </Button>
-                  </Box>
-                </Card>
-              </Grid>
+              <Card variant="outlined" key={item.product._id} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%' }}>
+                <Box sx={{ flexShrink: 0, p: 2 }}>
+                  <img
+                    src={item.product.imageUrl}
+                    alt={item.product.name}
+                    style={{ width: 120, height: 120, objectFit: 'cover' }}
+                  />
+                </Box>
+                <CardContent sx={{ flex: 1 }}>
+                  <Typography variant="h6" component="div">
+                    {item.product.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Price: ${item.product.price}
+                  </Typography>
+                  <Divider sx={{ my: 2 }} />
+                  <Typography variant="body1">
+                    Quantity: {item.quantity}
+                  </Typography>
+                </CardContent>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 2 }}>
+                  <IconButton color="primary" onClick={() => handleIncrement(item.product._id)}>
+                    <AddIcon />
+                  </IconButton>
+                  <IconButton color="secondary" onClick={() => handleDecrement(item.product._id)} disabled={item.quantity <= 1}>
+                    <RemoveIcon />
+                  </IconButton>
+                  <Button variant="outlined" color="error" onClick={() => handleRemove(item.product._id)} sx={{ mt: 2 }}>
+                    Remove
+                  </Button>
+                </Box>
+              </Card>
             ))
           }
-        </Grid>
+          <Box sx={{ mt: 4, textAlign: 'center' }}>
+            <Typography variant="h6">
+              Total Amount: ${calculateTotalAmount().toFixed(2)}
+            </Typography>
+            <Button variant="contained" color="primary" onClick={handleCheckout} sx={{ mt: 2 }}>
+              Checkout
+            </Button>
+          </Box>
+        </Box>
       </Container>
+      
+      {/* Snackbar for Checkout */}
+      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity="info" sx={{ width: '100%' }}>
+          Checkout feature is not yet implemented.
+        </Alert>
+      </Snackbar>
     </Layout>
   );
 };
